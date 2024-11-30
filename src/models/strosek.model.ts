@@ -4,7 +4,15 @@ const strosekSchema = new mongoose.Schema({
     id: {type: String},
     naziv: { type: String, required: true },
     znesek: { type: Number, required: true },
-    datum: { type: Date, default: Date.now },
+    datum: { 
+      type: String, 
+      required: [true, 'Datum je obvezen.'],
+      validate: {
+        validator: (value: any) =>  {
+          return !isNaN(new Date(value).getTime());
+        },
+        message: 'Datum mora biti veljaven.',
+    }, },
     kategorija: { type: String, required: true },
     oseba: {type: String, required: true},
     nacinPlacila: {type: String, required: true},

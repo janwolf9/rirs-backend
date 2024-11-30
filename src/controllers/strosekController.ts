@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import {Request, Response, NextFunction} from 'express';
 
 import {Strosek} from '../models/strosek.model';
 
@@ -14,7 +14,7 @@ export const getZaposleni = async (req: Request, res: Response) => {
 	}
 };
 
-export const addZaposleni = async (req: Request, res: Response) => {
+export const addZaposleni = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try{
         const strosek = new Strosek({
             naziv: req.body.naziv,
@@ -25,13 +25,21 @@ export const addZaposleni = async (req: Request, res: Response) => {
             nacinPlacila: req.body.nacinPlacila,
             komentar: req.body.komentar,
         });
+
+        const validationError = strosek.validateSync();
+        if (validationError) {
+            res.status(400).json({
+                message: 'Invalid data provided.',
+                error: validationError.errors,
+            });
+            return;
+        }
+
         await strosek.save();
         res.status(201).json(strosek);
 	} catch (err) {
-		res.status(500).json({
-			message: 'Error creating strosek',
-			error: err,
-    })};
+		next(err);
+    };
 };
 
 export const deleteZaposleni = async (req: Request, res: Response) => {
