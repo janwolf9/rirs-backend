@@ -42,7 +42,6 @@ jobs:
       with:
         name: backend-build  # Ime artefakta
         path: |
-          /
           node_modules/
 
   test-backend:
@@ -68,12 +67,10 @@ jobs:
 
     - name: Install dependencies  # Namestitev odvisnosti
       run: |
-        cd rirs-backend
         npm ci
 
     - name: Run tests with coverage  # Izvajanje testov s pokritostjo
       run: |
-        cd rirs-backend
         npm run test:ci
 
     - name: Upload coverage report  # Naložitev poročila o pokritosti kode
