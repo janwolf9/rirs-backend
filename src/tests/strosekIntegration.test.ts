@@ -9,6 +9,10 @@ beforeEach(async () => {
     await Strosek.deleteMany({});
 });
 
+afterEach(() => {
+  jest.clearAllTimers();
+});
+
 describe('Strosek API Integration Tests', () => {
   it('should fetch all stroski', async () => {
     const response = await request(app).get('/stroski');
