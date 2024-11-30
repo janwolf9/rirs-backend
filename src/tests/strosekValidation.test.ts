@@ -1,6 +1,11 @@
 
 import { Strosek } from '../models/strosek.model';
 
+afterAll(() => {
+  process.exit();
+});
+
+
 describe('Strosek Model Validation', () => {
   it('should validate a valid strosek object', () => {
     const validStrosek = new Strosek({
@@ -80,7 +85,7 @@ describe('Strosek Model Validation', () => {
     });
 
     const error = invalidStrosek.validateSync();
-    
+
     expect(error).not.toBeNull();
     if (error) {
       expect(error.errors).toHaveProperty('datum');
