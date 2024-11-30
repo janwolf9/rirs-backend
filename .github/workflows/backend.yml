@@ -29,13 +29,12 @@ jobs:
       uses: actions/cache@v3
       with:
         path: rirs-backend/node_modules  # Pot do mape node_modules
-        key: ${{ runner.os }}-backend-${{ hashFiles('rirs-backend/package-lock.json') }}  # Ključ za cache
+        key: ${{ runner.os }}-rirs-backend-${{ hashFiles('rirs-backend/package-lock.json') }}  # Ključ za cache
         restore-keys: |
           ${{ runner.os }}-backend-
 
     - name: Install dependencies  # Namestitev odvisnosti
       run: |
-        cd rirs-backend
         npm ci
 
     - name: Upload backend artifacts  # Naložitev artefaktov za backend
@@ -43,8 +42,8 @@ jobs:
       with:
         name: backend-build  # Ime artefakta
         path: |
-          rirs-backend/  # Pot do backend kode
-          rirs-backend/node_modules/  # Pot do nameščenih odvisnosti
+          /
+          node_modules/
 
   test-backend:
     needs: build-backend 
@@ -65,7 +64,7 @@ jobs:
         path: rirs-backend/node_modules  
         key: ${{ runner.os }}-backend-${{ hashFiles('rirs-backend/package-lock.json') }}  # Ključ za cache
         restore-keys: |
-          ${{ runner.os }}-backend-
+          ${{ runner.os }}-rirsu-backend-
 
     - name: Install dependencies  # Namestitev odvisnosti
       run: |
