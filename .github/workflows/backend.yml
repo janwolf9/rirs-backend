@@ -25,8 +25,8 @@ jobs:
     - name: Cache node_modules 
       uses: actions/cache@v3
       with:
-        path: rirs-backend/node_modules  # Pot do mape node_modules
-        key: ${{ runner.os }}-rirs-backend-${{ hashFiles('rirs-backend/package-lock.json') }}  # Ključ za cache
+        path: node_modules  # Pot do mape node_modules
+        key: ${{ runner.os }}-rirs-backend-${{ hashFiles('package-lock.json') }}  # Ključ za cache
         restore-keys: |
           ${{ runner.os }}-backend-
 
@@ -57,8 +57,8 @@ jobs:
     - name: Cache node_modules  
       uses: actions/cache@v3
       with:
-        path: rirs-backend/node_modules  
-        key: ${{ runner.os }}-backend-${{ hashFiles('rirs-backend/package-lock.json') }}  # Ključ za cache
+        path: node_modules  
+        key: ${{ runner.os }}-backend-${{ hashFiles('package-lock.json') }}  # Ključ za cache
         restore-keys: |
           ${{ runner.os }}-rirsu-backend-
 
