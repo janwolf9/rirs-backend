@@ -7,7 +7,7 @@
     "test": "jest",
     "compile": "tsc",
     "start": "npm run compile && node build/src",
-    "test:ci": "jest --ci --detectOpenHandles"
+    "test:ci": "jest --ci --detectOpenHandles --coverage"
   },
   "author": "",
   "license": "ISC",
