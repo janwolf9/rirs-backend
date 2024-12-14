@@ -8,6 +8,7 @@ import swaggerDocs from './utils/swaggerConfig';
 
 import strosekRoutes from './routes/strosekRoutes';
 import zaposleniRoutes from './routes/zaposleniRoutes';
+import kpiRoutes from './routes/kpiRoutes';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({extended: false}));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/stroski', strosekRoutes)
 app.use('/zaposleni', zaposleniRoutes)
+app.use('/kpi', kpiRoutes)
 
 const port = 3000
 
