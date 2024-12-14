@@ -3,6 +3,10 @@ import app from '../index';
 
 import { KPI } from '../models/kpi.model';
 
+afterAll(() => {
+    process.exit();
+  });
+
 describe('Kpi API Integration Tests', () => {
     it('should fetch all kpis', async () => {
       const response = await request(app).get('/kpi');

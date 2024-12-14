@@ -13,6 +13,10 @@ afterEach(() => {
   jest.clearAllTimers();
 });
 
+afterAll(() => {
+  process.exit();
+});
+
 describe('Strosek API Integration Tests', () => {
   it('should fetch all stroski', async () => {
     const response = await request(app).get('/stroski');

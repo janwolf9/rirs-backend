@@ -1,6 +1,10 @@
 
 import { Strosek } from '../models/strosek.model';
 
+afterAll(() => {
+  process.exit();
+});
+
 describe('Strosek Model Validation', () => {
   it('should validate a valid strosek object', () => {
     const validStrosek = new Strosek({
