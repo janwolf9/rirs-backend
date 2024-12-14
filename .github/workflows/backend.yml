@@ -102,4 +102,19 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:dev
         docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:${{ github.sha }}
 
-  
+  deploy-vercel:
+    needs: [dockerize-and-push-prod]
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v21
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: "--prod"
+          working-directory: ./
