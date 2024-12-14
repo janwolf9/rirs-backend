@@ -9,5 +9,5 @@ const kpiSchema = new mongoose.Schema({
     datum: { type: Date, default: Date.now }
   });
   
-  const KPI = mongoose.model('KPI', kpiSchema);
+  export const KPI = mongoose.model('KPI', kpiSchema);
   
