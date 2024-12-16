@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
+      - dev
 
 jobs:
 
@@ -80,7 +82,7 @@ jobs:
     needs: test-backend
     runs-on: ubuntu-latest
     environment: Development
-    if: github.ref == 'refs/heads/main' 
+    if: github.ref == 'refs/heads/dev' 
 
     steps:
     - name: Checkout code
@@ -101,6 +103,91 @@ jobs:
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:dev
         docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:${{ github.sha }}
+
+  dockerize-and-push-prod:
+    needs: [test-backend, sonarcloud-analysis]
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main' 
+
+    environment:
+      name: Production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Check SonarCloud Quality Gate
+      run: |
+        curl -u ${{ secrets.SONAR_TOKEN }}: \
+          "https://sonarcloud.io/api/project_badges/measure?project=${{ secrets.PROJECT_KEY }}&metric=alert_status" | grep -q "passed" || exit 1
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:prod ./
+        docker tag ${{ secrets.DOCKER_USERNAME }}/backend:prod ${{ secrets.DOCKER_USERNAME }}/backend:${{ github.sha }}
+
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/frontbackendend:prod
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend:${{ github.sha }}  
+
+  sonarcloud-analysis:
+    needs: test-backend  
+    runs-on: ubuntu-latest
+    environment:
+
+      name: Development      
+    if: github.ref == 'refs/heads/main' 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        
+    - name: Setup Java 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+
+    - name: Collect coverage (React-specific)
+      run: |
+        npm run test:ci -- --coverage
+      env:
+        CI: true
+
+    - name: Upload coverage report
+      run: |
+        cp coverage/lcov.info .
+
+    - name: Fix permissions for sonar-scanner
+      run: chmod +x ./node_modules/.bin/sonar-scanner || true
+
+    - name: Run SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        npx sonar-scanner \
+          -Dsonar.projectKey=${{ secrets.PROJECT_KEY }} \
+          -Dsonar.organization=${{ secrets.ORGANIZATION_KEY }} \
+          -Dsonar.sources=./ \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info 
 
   deploy-vercel:
     needs: dockerize-and-push-dev
