@@ -190,7 +190,7 @@ jobs:
           -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info 
 
   deploy-vercel:
-    needs: dockerize-and-push-dev
+    needs: dockerize-and-push-prod
     runs-on: ubuntu-latest
 
     if: github.ref == 'refs/heads/main'
